@@ -1,4 +1,4 @@
-# inconsistently_perceived_race_public
+# Reproduction code for "Testing for racial bias using inconsistent perceptions of race" (Gera and Pierson, 2024)
 
 We did preliminary analysis in Python and used R to run the analyses and construct the tables and figures for this paper.
 
