@@ -53,9 +53,13 @@ read_processed_csv = function(state, subset='hispanic-white') {
                         time = col_time(format = "%H:%M:%S"))
   if(state == 'AZ') {
     if (subset == 'all') {
-      return(read_csv('az_raw_with_driver_id_Style_Year.csv', col_types=col_formatters))
+      az_all_d = read_csv('az_raw_with_driver_id_Style_Year.csv', col_types=col_formatters)
+      az_all_d$driver_id = paste0('AZ', as.character(az_all_d$driver_id))
+      return(az_all_d)
     } else if (subset == 'multiply-stopped') {
-      return(read_csv('az_grouped_Style_Year.csv', col_types=col_formatters))
+      az_multiply_stopped_d = read_csv('az_grouped_Style_Year.csv', col_types=col_formatters)
+      az_multiply_stopped_d$driver_id = paste0('AZ', as.character(az_multiply_stopped_d$driver_id))
+      return(az_multiply_stopped_d)
     } else if (subset == 'hispanic-white') {
       filepath = 'az_hispanic_white_drivers_Style_Year.csv'
     }
@@ -65,9 +69,13 @@ read_processed_csv = function(state, subset='hispanic-white') {
     extra_cols_to_keep = c('stop_duration', 'county_fips', 'officer_id', 'is_arrested')
   } else if(state == 'CO') {
     if (subset == 'all') {
-      return(read_csv('co_raw_with_driver_id_mod_officer_id.csv', col_types=col_formatters))
+      co_all_d = read_csv('co_raw_with_driver_id_mod_officer_id.csv', col_types=col_formatters)
+      co_all_d$driver_id = paste0('CO', as.character(co_all_d$driver_id))
+      return(co_all_d)
     } else if (subset == 'multiply-stopped') {
-      return(read_csv('co_grouped_mod_officer_id.csv', col_types=col_formatters))
+      co_multiply_stopped_d = read_csv('co_grouped_mod_officer_id.csv', col_types=col_formatters)
+      co_multiply_stopped_d$driver_id = paste0('CO', as.character(co_multiply_stopped_d$driver_id))
+      return(co_multiply_stopped_d)
     } else if (subset == 'hispanic-white') {
       filepath = 'co_hispanic_white_drivers_only_mod.csv'
     }
@@ -77,9 +85,13 @@ read_processed_csv = function(state, subset='hispanic-white') {
     extra_cols_to_keep = c('county_fips', 'officer_id', 'is_arrested')
   } else if(state == 'TX') {
     if (subset == 'all') {
-      return(read_csv('tx_raw_with_driver_id_driver_race.csv', col_types=col_formatters))
+      tx_all_d = read_csv('tx_raw_with_driver_id_driver_race.csv', col_types=col_formatters)
+      tx_all_d$driver_id = paste0('TX', as.character(tx_all_d$driver_id))
+      return(tx_all_d)
     } else if (subset == 'multiply-stopped') {
-      return(read_csv('tx_processed_grouped_driver_race_raw.csv', col_types=col_formatters))
+      tx_multiply_stopped_d = read_csv('tx_processed_grouped_driver_race_raw.csv', col_types=col_formatters)
+      tx_multiply_stopped_d$driver_id = paste0('TX', as.character(tx_multiply_stopped_d$driver_id))
+      return(tx_multiply_stopped_d)
     } else if (subset == 'hispanic-white') {
       filepath = 'tx_processed_hispanic_white_drivers_driver_race.csv'
     }
@@ -158,53 +170,51 @@ message('number of unique drivers: ', length(unique(overall_d$driver_id)))
 message("Search rates by state and race")
 print(overall_d %>% group_by(state, driver_race) %>% summarize(n = n(), search_p=search_conducted %>% mean()))
 
-# uncomment to construct a similar dataframe for the raw/all data and multiply-stopped data
+# Combine all state datasets together to analyze search rates
+subset_cols = c('search_conducted', 'driver_race', 'driver_id')
+all_d = rbind(
+  read_processed_csv('AZ', 'all')[,subset_cols],
+  read_processed_csv('CO', 'all')[,subset_cols],
+  read_processed_csv('TX', 'all')[,subset_cols]
+)
+print('all data samples')
+print(all_d %>% sample_n(10))
+print(nrow(all_d))
+save(all_d, file='all_d.RData')
+print(all_d %>% sample_n(10))
 
-# # Combine all state datasets together to analyze search rates
-# subset_cols = c('search_conducted', 'driver_race', 'driver_id')
-# all_d = rbind(
-#   read_processed_csv('AZ', 'all')[,subset_cols],
-#   read_processed_csv('CO', 'all')[,subset_cols],
-#   read_processed_csv('TX', 'all')[,subset_cols]
-# )
-# print('all data samples')
-# print(all_d %>% sample_n(10))
-# print(nrow(all_d))
-# save(all_d, file='all_d.RData')
-# print(all_d %>% sample_n(10))
-
-# # Combine AZ + CO datasets together to analyze arrest rates
+# Combine AZ + CO datasets together to analyze arrest rates
 # include is_arrested in this set
-# az_co_subset_cols  = c('is_arrested', 'search_conducted', 'driver_race', 'driver_id')
-# az_co_all_d = rbind(
-#   read_processed_csv('AZ', 'all')[,az_co_subset_cols], 
-#   read_processed_csv('CO', 'all')[,az_co_subset_cols]
-# )
-# save(az_co_all_d, file='az_co_all_d.RData')
-# print('all number of rows')
-# print(nrow(az_co_all_d))
-# print(az_co_all_d %>% sample_n(10))
+az_co_subset_cols  = c('is_arrested', 'search_conducted', 'driver_race', 'driver_id')
+az_co_all_d = rbind(
+  read_processed_csv('AZ', 'all')[,az_co_subset_cols], 
+  read_processed_csv('CO', 'all')[,az_co_subset_cols]
+)
+save(az_co_all_d, file='az_co_all_d.RData')
+print('all number of rows')
+print(nrow(az_co_all_d))
+print(az_co_all_d %>% sample_n(10))
 
-# # Combine all multiply-stopped datasets together to analyze search rates
-# multiply_stopped_cols = c('search_conducted', 'driver_race', 'driver_id')
-# multiply_stopped_d = rbind(
-#   read_processed_csv('AZ', 'multiply-stopped')[,multiply_stopped_cols],
-#   read_processed_csv('CO', 'multiply-stopped')[,multiply_stopped_cols],
-#   read_processed_csv('TX', 'multiply-stopped')[,multiply_stopped_cols]
-# )
-# save(multiply_stopped_d, file='multiply_stopped_d.RData')
-# print('multiply-stopped number of rows')
-# print(nrow(multiply_stopped_d))
-# print(multiply_stopped_d %>% sample_n(10))
+# Combine all multiply-stopped datasets together to analyze search rates
+multiply_stopped_cols = c('search_conducted', 'driver_race', 'driver_id')
+multiply_stopped_d = rbind(
+  read_processed_csv('AZ', 'multiply-stopped')[,multiply_stopped_cols],
+  read_processed_csv('CO', 'multiply-stopped')[,multiply_stopped_cols],
+  read_processed_csv('TX', 'multiply-stopped')[,multiply_stopped_cols]
+)
+save(multiply_stopped_d, file='multiply_stopped_d.RData')
+print('multiply-stopped number of rows')
+print(nrow(multiply_stopped_d))
+print(multiply_stopped_d %>% sample_n(10))
 
-# # Combine AZ + CO multiply-stopped datasets together to analyze arrest rates
-# az_co_multiply_stopped_cols = c('is_arrested', 'search_conducted', 'driver_race', 'driver_id')
-# az_co_multiply_stopped_d = rbind(
-#   read_processed_csv('AZ', 'multiply-stopped')[,az_co_multiply_stopped_cols], 
-#   read_processed_csv('CO', 'multiply-stopped')[,az_co_multiply_stopped_cols]
-# )
-# save(az_co_multiply_stopped_d, file='az_co_multiply_stopped_d.RData')
-# print(az_co_multiply_stopped_d %>% sample_n(10))
+# Combine AZ + CO multiply-stopped datasets together to analyze arrest rates
+az_co_multiply_stopped_cols = c('is_arrested', 'search_conducted', 'driver_race', 'driver_id')
+az_co_multiply_stopped_d = rbind(
+  read_processed_csv('AZ', 'multiply-stopped')[,az_co_multiply_stopped_cols], 
+  read_processed_csv('CO', 'multiply-stopped')[,az_co_multiply_stopped_cols]
+)
+save(az_co_multiply_stopped_d, file='az_co_multiply_stopped_d.RData')
+print(az_co_multiply_stopped_d %>% sample_n(10))
 
 # create dataframe which filters out officers who always search or never search. 
 officer_search_rates = overall_d %>% group_by(officer_id) %>% summarize(officer_search_rate = mean(search_conducted), nonuniform_officer=(officer_search_rate < 1) & (officer_search_rate > 0))
