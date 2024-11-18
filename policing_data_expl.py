@@ -70,17 +70,17 @@ def get_state_data(state_name):
     """
     state_data_dict = {}
     if (state_name == 'az'):
-        state_data_dict['all_drivers'] = pd.read_csv('/share/pierson/non_public_open_policing_data/nora_work/az_raw_with_driver_id_Style_Year.csv')
+        state_data_dict['all_drivers'] = pd.read_csv('az_raw_with_driver_id_Style_Year.csv')
         state_data_dict['multiply_stopped'] = pd.read_csv('az_grouped_Style_Year.csv')
-        state_data_dict['racially_ambig'] = pd.read_csv('/share/pierson/non_public_open_policing_data/nora_work/az_hispanic_white_drivers_Style_Year.csv')
+        state_data_dict['racially_ambig'] = pd.read_csv('az_hispanic_white_drivers_Style_Year.csv')
     elif (state_name == 'co'):
-        state_data_dict['all_drivers'] = pd.read_csv('/share/pierson/non_public_open_policing_data/nora_work/co_raw_with_driver_id_mod_officer_id.csv')
+        state_data_dict['all_drivers'] = pd.read_csv('co_raw_with_driver_id_mod_officer_id.csv')
         state_data_dict['multiply_stopped'] = pd.read_csv('co_grouped_mod_officer_id.csv')
-        state_data_dict['racially_ambig'] = pd.read_csv('/share/pierson/non_public_open_policing_data/nora_work/co_hispanic_white_drivers_only_mod.csv')
+        state_data_dict['racially_ambig'] = pd.read_csv('co_hispanic_white_drivers_only_mod.csv')
     elif (state_name == 'tx'):
-        state_data_dict['all_drivers'] = pd.read_csv('/share/pierson/non_public_open_policing_data/nora_work/tx_raw_with_driver_id_driver_race.csv')
-        state_data_dict['multiply_stopped'] = pd.read_csv('/share/pierson/non_public_open_policing_data/nora_work/tx_processed_grouped_driver_race_raw.csv')
-        state_data_dict['racially_ambig'] = pd.read_csv('/share/pierson/non_public_open_policing_data/nora_work/tx_processed_hispanic_white_drivers_driver_race.csv')
+        state_data_dict['all_drivers'] = pd.read_csv('tx_raw_with_driver_id_driver_race.csv')
+        state_data_dict['multiply_stopped'] = pd.read_csv('tx_processed_grouped_driver_race_raw.csv')
+        state_data_dict['racially_ambig'] = pd.read_csv('tx_processed_hispanic_white_drivers_driver_race.csv')
     else:
         raise ValueError("Invalid state name")
     return state_data_dict
