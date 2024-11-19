@@ -129,7 +129,7 @@ read_processed_csv = function(state, subset='hispanic-white') {
   d$state = state
   
   # subset columns using vector. 
-  all_cols_to_keep = c(c('driver_id', 'driver_race', 'hour_of_day', 'search_conducted', 'county_id', 'stop_date', 'stop_time', 'state', 'contraband_found'), 
+  all_cols_to_keep = c(c('driver_id', 'driver_race', 'hour_of_day', 'search_conducted', 'county_id', 'stop_date', 'stop_time', 'state', 'contraband_found', 'violation', 'county_name'), 
                        extra_cols_to_keep)
   d = d[,all_cols_to_keep]
   d = add_time_variables(d)
@@ -617,6 +617,27 @@ print('-------')
 print(multiply_stopped_d %>% sample_n(10))
 print('-------')
 print(az_co_all_d %>% sample_n(10))
+# plot the five most common values for the column col in the dataframe d
+print_top_five_col_values = function(d, col) {
+  col_frequency = table(d[[col]])
+  # sort by frequency, most frequent first
+  sorted_freq = sort(col_frequency, decreasing = TRUE) %>% head(5)
+  print('sorted frequency')
+  print(head(sorted_freq, 5))
+}
+
+# print the top 5 values for the columns 'violation' and 'county_name' for each state and type
+print_top_five_values_per_datset = function() {
+  for (state in c('AZ', 'CO', 'TX')) {
+    for (type in c('all', 'multiply-stopped', 'hispanic-white')) {
+      for (col in c('violation', 'county_name')) {
+        print(sprintf('Top 5 values for %s - %s %s', col, state, type))
+        print_top_five_col_values(read_processed_csv(state, type), col)
+      }
+    }
+  }
+}
+
 plot_subset_comparisons = function(dv) {
   # plot search and arrest rate comparisons across subpopulations
   # arrest data only available for az and co
@@ -632,16 +653,6 @@ plot_subset_comparisons = function(dv) {
   plot = plot_data(comparison_data, 'All', dv, rate, '%', comparison_plots = TRUE)
   ggsave(paste0('plots/feols/comparison_', dv, '_plot.pdf'), plot, width=5, height=2)
 }
-
-# # plot the five most common values for the column col in the dataframe d
-# get_top_five_col_values = function(d, col) {
-#   col_frequency = table(d[[col]])
-#   # sort by frequency, most frequent first
-#   sorted_freq = sort(col_frequency, decreasing = TRUE)
-#   top_5 = head(col_frequency, 5)
-#   top_5
-# }
-
 
 
 # overall regressions using the other models 
@@ -675,6 +686,7 @@ if (args == 'plot-primary-spec-feols-search-rate') {
 } else if (args == 'analyze-population-representativeness') {
   plot_subset_comparisons('search_conducted')
   plot_subset_comparisons('is_arrested')
+  print_top_five_values_per_datset()
 } else {
-  stop('Not a valid argument; try one of the following: plot-primary-spec-feols-search-rate, plot-primary-spec-feols-arrest-rate, plot-spec-feglm-search-rate, plot-spec-cond-logistic-search-rate, analyze-population-representativeness')
+  stop('Not a valid argument; try one of the following: plot-primary-spec-feols-search-rate, plot-primary-spec-feols-arrest-rate, plot-primary-spec-feols-az-stop-duration, plot-spec-feglm-search-rate, plot-spec-cond-logistic-search-rate, analyze-population-representativeness')
 }
