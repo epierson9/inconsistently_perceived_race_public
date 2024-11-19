@@ -10,31 +10,30 @@ library(tidyr)
 
 az_data = c(
   'path-to-AZ-data.csv',
-  'az_grouped_Style_Year.csv',
-  'az_hispanic_white_drivers_Style_Year.csv'
+  'csv/az_grouped_Style_Year.csv',
+  'csv/az_hispanic_white_drivers_Style_Year.csv'
 )
 names(az_data) = c('Raw', 'Filtered', 'Hispanic_White')
 
 co_data = c(
   'path-to-CO-data.csv',
-  'co_grouped_mod_officer_id.csv',
-  'co_hispanic_white_drivers_only_mod.csv'
+  'csv/co_grouped_mod_officer_id.csv',
+  'csv/co_hispanic_white_drivers_only_mod.csv'
 )
 names(co_data) = c('Raw', 'Filtered', 'Hispanic_White')
 
 tx_data = c(
   'path-to-TX-data.csv',
-  'tx_processed_grouped_driver_race_raw.csv',
-  'tx_processed_hispanic_white_drivers_driver_race.csv'
+  'csv/tx_processed_grouped_driver_race_raw.csv',
+  'csv/tx_processed_hispanic_white_drivers_driver_race.csv'
 )
 names(tx_data) = c('Raw', 'Filtered', 'Hispanic_White')
 
 overall_data = c(
-  # 'overall_raw_mod_co.csv',
-  'overall_grouped_mod_co.csv',
-  'overall_hispanic_white_drivers_mod_co.csv'
+  'csv/overall_grouped_mod_co.csv',
+  'csv/overall_hispanic_white_drivers_mod_co.csv'
 )
-names(overall_data) = c('Filtered', 'Hispanic_White') # c('Raw', 'Filtered', 'Hispanic_White')
+names(overall_data) = c('Filtered', 'Hispanic_White')
 
 fix_cols = function(state, df) {
   if (state == 'az') {
@@ -65,7 +64,7 @@ fix_cols = function(state, df) {
     stop_year = as.numeric(substr(df$stop_date, 1, 4))
     # only keep years 2016 and 2017
     df = df[(stop_year >= 2016), ]
-    # # uppercase the first letter of driver_race_raw
+    # uppercase the first letter of driver_race_raw
     if ('driver_race_raw' %in% colnames(df)) {
       df$driver_race = str_to_title(df$driver_race_raw)
     }
@@ -103,15 +102,8 @@ create_overall_data = function() {
     overall = data.frame()
     for (state in c('az', 'co', 'tx')) {
       data = read.csv(get(paste0(state, '_data'))[[type_data]], na.strings=null_str)
-      # if (type_data == 'Raw') {
-      #   # make the same adjustments as standardize_cols in policing_data_expl
-      #   data = fix_cols(state, data)
-      #   # there is no driver_id column so make the driver id the state abbreviation like AZ for all of the data rows
-      #   data$driver_id = matrix(state, nrow=nrow(data), ncol=1)
-      # } else {
-        # otherwise, add the state abbreviation to the driver_id to make them unique across states
-        data$driver_id = paste0(state, '_', data$driver_id)
-      # }
+      # add the state to the driver_id to make it unique
+      data$driver_id = paste0(state, '_', data$driver_id)
       cols = c(get(paste0(state, '_cols')), extra_cols)
       print(cols)
       state_data = data[cols]
@@ -139,9 +131,8 @@ create_overall_data = function() {
 }
 
 # Create the overall data for Filtered and Hispanic_White
-# create_overall_data()
+create_overall_data()
 print('DIMS')
-# print(dim(read.csv(overall_data[['Raw']])))
 print(dim(read.csv(overall_data[['Filtered']])))
 print(dim(read.csv(overall_data[['Hispanic_White']])))
 print('END DIMS')
@@ -262,13 +253,7 @@ populate_latex_df = function() {
 
 # Populate the latex df
 latex_df = populate_latex_df()
-# print('FROM THE POPULATING')
-# print(latex_df)
-# print("_________________ END POPULATING")
-# save(latex_df, file = "latex_df_mod_co.RData")
-# latex_df_read = load("latex_df_mod_co.RData")
-# print('BEGIN READ')
-# print(latex_df_read)
+
 # transpose the table to get the columns to be the states
 latex_df = t(latex_df)
 print('transposed')
@@ -322,7 +307,7 @@ hispanic_white_percent_str = create_percent_rows(7, 5, "\\% of inconsistently-pe
 hispanic_white_drivers_percent_str = create_percent_rows(8, 6, "\\% of inconsistently-perceived driver stops")
 print(hispanic_white_drivers_percent_str)
 
-# Print the LaTeX table to the file
+# print the LaTeX table to the file
 align_str = "p{6.3cm}llll"
 lines=c(-1, 0, 2)
 latex_table = xtable(latex_df, align=align_str, label="tab:descriptive_stats", 
@@ -334,7 +319,6 @@ x = print(latex_table, tabular.environment = "tabular*",
 
 # add the multi-column part (which means adding another column, fixing the alignment string)
 r = sub(align_str, "@{}p{6.3cm}llll@{}", x, fixed=TRUE)
-# r = gsub(" & Arizona", "\\multicolumn{2}{l}{} & Arizona", r, fixed=TRUE)
 r = sub(headers_per_row[1], paste0("\\toprule\\multicolumn{5}{l}{\\textbf{Full dataset}}\\\\\n\\toprule\nDrivers"), r, fixed=TRUE)
 r = sub(headers_per_row[2], "\\midrule\nStops", r, fixed=TRUE)
 r = sub(headers_per_row[3], "\\toprule\n\\multicolumn{5}{l}{\\textbf{Multiply-stopped drivers}}\\\\\n\\toprule\n Drivers", r, fixed=TRUE)

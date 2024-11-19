@@ -53,15 +53,15 @@ read_processed_csv = function(state, subset='hispanic-white') {
                         time = col_time(format = "%H:%M:%S"))
   if(state == 'AZ') {
     if (subset == 'all') {
-      az_all_d = read_csv('az_raw_with_driver_id_Style_Year.csv', col_types=col_formatters)
+      az_all_d = read_csv('csv/az_raw_with_driver_id_Style_Year.csv', col_types=col_formatters)
       az_all_d$driver_id = paste0('AZ', as.character(az_all_d$driver_id))
       return(az_all_d)
     } else if (subset == 'multiply-stopped') {
-      az_multiply_stopped_d = read_csv('az_grouped_Style_Year.csv', col_types=col_formatters)
+      az_multiply_stopped_d = read_csv('csv/az_grouped_Style_Year.csv', col_types=col_formatters)
       az_multiply_stopped_d$driver_id = paste0('AZ', as.character(az_multiply_stopped_d$driver_id))
       return(az_multiply_stopped_d)
     } else if (subset == 'hispanic-white') {
-      filepath = 'az_hispanic_white_drivers_Style_Year.csv'
+      filepath = 'csv/az_hispanic_white_drivers_Style_Year.csv'
     }
     d = read_csv(filepath, col_types = col_formatters)
     print('az rows')
@@ -69,15 +69,15 @@ read_processed_csv = function(state, subset='hispanic-white') {
     extra_cols_to_keep = c('stop_duration', 'county_fips', 'officer_id', 'is_arrested')
   } else if(state == 'CO') {
     if (subset == 'all') {
-      co_all_d = read_csv('co_raw_with_driver_id_mod_officer_id.csv', col_types=col_formatters)
+      co_all_d = read_csv('csv/co_raw_with_driver_id_mod_officer_id.csv', col_types=col_formatters)
       co_all_d$driver_id = paste0('CO', as.character(co_all_d$driver_id))
       return(co_all_d)
     } else if (subset == 'multiply-stopped') {
-      co_multiply_stopped_d = read_csv('co_grouped_mod_officer_id.csv', col_types=col_formatters)
+      co_multiply_stopped_d = read_csv('csv/co_grouped_mod_officer_id.csv', col_types=col_formatters)
       co_multiply_stopped_d$driver_id = paste0('CO', as.character(co_multiply_stopped_d$driver_id))
       return(co_multiply_stopped_d)
     } else if (subset == 'hispanic-white') {
-      filepath = 'co_hispanic_white_drivers_only_mod.csv'
+      filepath = 'csv/co_hispanic_white_drivers_only_mod.csv'
     }
     d = read_csv(filepath, col_types = col_formatters)
     print('co rows')
@@ -85,15 +85,15 @@ read_processed_csv = function(state, subset='hispanic-white') {
     extra_cols_to_keep = c('county_fips', 'officer_id', 'is_arrested')
   } else if(state == 'TX') {
     if (subset == 'all') {
-      tx_all_d = read_csv('tx_raw_with_driver_id_driver_race.csv', col_types=col_formatters)
+      tx_all_d = read_csv('csv/tx_raw_with_driver_id_driver_race.csv', col_types=col_formatters)
       tx_all_d$driver_id = paste0('TX', as.character(tx_all_d$driver_id))
       return(tx_all_d)
     } else if (subset == 'multiply-stopped') {
-      tx_multiply_stopped_d = read_csv('tx_processed_grouped_driver_race_raw.csv', col_types=col_formatters)
+      tx_multiply_stopped_d = read_csv('csv/tx_processed_grouped_driver_race_raw.csv', col_types=col_formatters)
       tx_multiply_stopped_d$driver_id = paste0('TX', as.character(tx_multiply_stopped_d$driver_id))
       return(tx_multiply_stopped_d)
     } else if (subset == 'hispanic-white') {
-      filepath = 'tx_processed_hispanic_white_drivers_driver_race.csv'
+      filepath = 'csv/tx_processed_hispanic_white_drivers_driver_race.csv'
     }
     d = read_csv(filepath, col_types = col_formatters)
     print('tx rows')
@@ -136,16 +136,11 @@ read_processed_csv = function(state, subset='hispanic-white') {
   # print random sample of dataframe - good to inspect and make sure all rows look reasonable. 
   print(state)
   message("Random sample of dataframe")
-  # View(d %>% sample_n(10))
+  print(d %>% sample_n(10))
   message("missing data fractions by column")
   print(colMeans(is.na(d)))
   d
 }
-
-# for placing the output in a file
-# zz <- file("regression_plot_output.txt", open = "wt")
-# sink(zz, type='output')
-# sink(zz, type='message')
 
 texas_d = read_processed_csv('TX')
 # print a sample of texas_d of 10 rows
@@ -170,7 +165,7 @@ message('number of unique drivers: ', length(unique(overall_d$driver_id)))
 message("Search rates by state and race")
 print(overall_d %>% group_by(state, driver_race) %>% summarize(n = n(), search_p=search_conducted %>% mean()))
 
-# Combine all state datasets together to analyze search rates
+# combine all state datasets together to analyze search rates
 subset_cols = c('search_conducted', 'driver_race', 'driver_id')
 all_d = rbind(
   read_processed_csv('AZ', 'all')[,subset_cols],
@@ -183,7 +178,7 @@ print(nrow(all_d))
 save(all_d, file='all_d.RData')
 print(all_d %>% sample_n(10))
 
-# Combine AZ + CO datasets together to analyze arrest rates
+# combine AZ + CO datasets together to analyze arrest rates
 # include is_arrested in this set
 az_co_subset_cols  = c('is_arrested', 'search_conducted', 'driver_race', 'driver_id')
 az_co_all_d = rbind(
@@ -195,7 +190,7 @@ print('all number of rows')
 print(nrow(az_co_all_d))
 print(az_co_all_d %>% sample_n(10))
 
-# Combine all multiply-stopped datasets together to analyze search rates
+# combine all multiply-stopped datasets together to analyze search rates
 multiply_stopped_cols = c('search_conducted', 'driver_race', 'driver_id')
 multiply_stopped_d = rbind(
   read_processed_csv('AZ', 'multiply-stopped')[,multiply_stopped_cols],
@@ -207,7 +202,7 @@ print('multiply-stopped number of rows')
 print(nrow(multiply_stopped_d))
 print(multiply_stopped_d %>% sample_n(10))
 
-# Combine AZ + CO multiply-stopped datasets together to analyze arrest rates
+# combine AZ + CO multiply-stopped datasets together to analyze arrest rates
 az_co_multiply_stopped_cols = c('is_arrested', 'search_conducted', 'driver_race', 'driver_id')
 az_co_multiply_stopped_d = rbind(
   read_processed_csv('AZ', 'multiply-stopped')[,az_co_multiply_stopped_cols], 
@@ -464,22 +459,6 @@ az_controls = list(
 )
 
 
-co_controls = list(
-  list(descript='No controls', dv='search_conducted', controls=list(), use_twoway=FALSE, effects=list('driver_id')),
-  list(descript='Officer id', dv='search_conducted', controls=list(), use_twoway=TRUE, effects=list('driver_id', 'officer_id')),
-  list(descript='Stop county', dv='search_conducted', controls=list(), use_twoway=FALSE, effects=list('driver_id', 'county_id')),
-  list(descript='Stop date/time', dv='search_conducted', controls=list('C(stop_year)', 'C(stop_quarter)', 'C(weekday)', 'C(stop_hour_categorical)'), use_twoway=FALSE, effects=list('driver_id')),
-  list(descript='All controls', dv='search_conducted', controls=list('C(stop_year)', 'C(county_id)', 'C(stop_quarter)', 'C(weekday)', 'C(stop_hour_categorical)'), use_twoway=TRUE, effects=list('driver_id', 'officer_id', 'county_id'))
-)
-
-tx_controls = list(
-  list(descript='No controls', dv='search_conducted', controls=list(), use_twoway=FALSE, effects=list('driver_id')),
-  list(descript='Officer id', dv='search_conducted', controls=list(), use_twoway=TRUE, effects=list('driver_id', 'officer_id')),
-  list(descript='Stop county', dv='search_conducted', controls=list('C(county_id)'), use_twoway=FALSE, effects=list('driver_id', 'county_id')),
-  list(descript='Stop date/time', dv='search_conducted', controls=list('C(stop_quarter)', 'C(weekday)', 'C(stop_hour_categorical)'), use_twoway=FALSE, effects=list('driver_id')),
-  list(descript='All controls', dv='search_conducted', controls=list('C(stop_year)', 'C(stop_quarter)', 'C(weekday)', 'C(stop_hour_categorical)'), use_twoway=TRUE, effects=list('driver_id', 'officer_id', 'county_id'))
-)
-
 overall_controls = list(
   list(descript='All', dv='search_conducted', controls=list('C(stop_year)', 'C(stop_quarter)', 'C(weekday)', 'C(stop_hour_categorical)'), use_twoway=TRUE, effects=list('driver_id', 'officer_id', 'county_id')),
   list(descript='Stop date/time', dv='search_conducted', controls=list('C(stop_year)', 'C(stop_quarter)', 'C(weekday)', 'C(stop_hour_categorical)'), use_twoway=FALSE, effects=list('driver_id')),
@@ -580,7 +559,6 @@ plot_feols_arizona = function() {
   plot = plot_data(az_search_stats, 'Arizona', 'search_conducted', 'Hispanic search rate - white search rate', '%')
   ggsave('plots/feols/Arizona_search_conducted_regr_plot.pdf', plot, width=5, height=2)
 }
-# plot_feols_arizona()
 
 # plot arrest data for supp. figure 1
 plot_az_co_data = function(dv) {
@@ -599,9 +577,6 @@ plot_az_co_data = function(dv) {
   plot = plot_data(az_co_arrest_stats, 'Arizona and Colorado', dv, paste('Hispanic', rate_type, 'rate - white', rate_type, 'rate'), '%')
   ggsave(paste0('plots/feols/Arizona_and_Colorado_', dv, '_regr_plot.pdf'), plot, width=5, height=2)
 }
-# plot_az_co_data('is_arrested')
-
-# plot_az_co_data('search_conducted')
 
 compute_search_rate_comparison = function(dv, data, yaxis_val, label) {
   print(nrow(data))
@@ -657,8 +632,17 @@ plot_subset_comparisons = function(dv) {
   plot = plot_data(comparison_data, 'All', dv, rate, '%', comparison_plots = TRUE)
   ggsave(paste0('plots/feols/comparison_', dv, '_plot.pdf'), plot, width=5, height=2)
 }
-# plot_subset_comparisons('search_conducted')
-plot_subset_comparisons('is_arrested')
+
+# # plot the five most common values for the column col in the dataframe d
+# get_top_five_col_values = function(d, col) {
+#   col_frequency = table(d[[col]])
+#   # sort by frequency, most frequent first
+#   sorted_freq = sort(col_frequency, decreasing = TRUE)
+#   top_5 = head(col_frequency, 5)
+#   top_5
+# }
+
+
 
 # overall regressions using the other models 
 plot_overall_regressions = function(model_name) {
@@ -675,20 +659,22 @@ plot_overall_regressions = function(model_name) {
   ggsave(sprintf('%s/%s/Overall_search_conducted_regr_plot_%s.pdf', 'plots', model_name, model_name), plot, width=5, height=2)
 }
 
-# # Plot feols data for figure 1
-# plot_overall_regressions('feols')
-# # Plot feglm data for supp. figure 2
-# plot_overall_regressions('feglm-nobiascorrect')
-# # Plot conditional logistic data for supp. figure 3
-# plot_overall_regressions('cond-logistic')
-  
-# NOTE: not used
-# plot_overall_regressions('mixed-linear')
-# plot_overall_regressions('mixed-logistic')
-# plot_overall_regressions('feglm-biascorrect')
-
-
-# for outputting the results in a separate file
-# sink(file=NULL, type='output')
-# sink(file=NULL, type='message')
-# close(zz)
+# read in the args
+args = commandArgs(trailingOnly = TRUE)
+print(args)
+if (args == 'plot-primary-spec-feols-search-rate') {
+  plot_overall_regressions('feols')
+} else if (args == 'plot-primary-spec-feols-arrest-rate') {
+  plot_az_co_data('is_arrested')
+} else if (args == 'plot-primary-spec-feols-az-stop-duration') {
+  plot_feols_arizona()
+} else if (args == 'plot-spec-feglm-search-rate') {
+  plot_overall_regressions('feglm-nobiascorrect')
+} else if (args == 'plot-spec-cond-logistic-search-rate') {
+  plot_overall_regressions('cond-logistic')
+} else if (args == 'analyze-population-representativeness') {
+  plot_subset_comparisons('search_conducted')
+  plot_subset_comparisons('is_arrested')
+} else {
+  stop('Not a valid argument; try one of the following: plot-primary-spec-feols-search-rate, plot-primary-spec-feols-arrest-rate, plot-spec-feglm-search-rate, plot-spec-cond-logistic-search-rate, analyze-population-representativeness')
+}
