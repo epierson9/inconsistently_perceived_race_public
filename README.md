@@ -4,7 +4,7 @@ We did preliminary analysis in Python and used R to run the analyses and constru
 
 ## Instructions for reproducing the results in this paper
 1. Raw data can be obtained by contacting the authors of the Open Policing Project at [open-policing@lists.stanford.edu].
-2. `policing_data_expl.py` contains all the preprocessing code and generates csv files that are used in the analysis in the `csv` folder. This file is a module for the state-specific python files, so don't run `policing_data_expl.py` directly. 
+2. `policing_data_expl.py` contains all the preprocessing code and generates csv files in the `csv` folder that are used later on in the analysis. This file is a module for the state-specific python files, so don't run `policing_data_expl.py` directly. 
 - Before running `python az.py`, `python co.py`,  or `python tx.py`, replace `path-to-raw-csv` in the `config` with the path to the raw state data you downloaded.
 - It should produce three csv files per state, and these will be used in the following analysis; their filenames start with the state prefix (ex. `az_`)
 3. `plot_regression_res.R` contains the code to reproduce the figures in the paper.
