@@ -1,7 +1,5 @@
 # Reproduction code for "Testing for racial bias using inconsistent perceptions of race" (Gera and Pierson, 2024)
 
-We did preliminary analysis in Python and used R to run the analyses and construct the tables and figures for this paper.
-
 ## Instructions for reproducing the results in this paper
 1. Raw data can be obtained by contacting the authors of the Open Policing Project at [open-policing@lists.stanford.edu].
 2. Preprocess the data. For each state, run the state-specific python file (ex. `az.py`) to standardize entries and filter the raw state data down to the set of multiply stopped drivers and inconsistently-perceived drivers. `policing_data_expl.py` contains all the preprocessing code and generates csv files in the `csv` folder that are used later on in the analysis; this file is used as a module for the state-specific python files, so it shouldn't be directly. 
