@@ -1,13 +1,9 @@
 # Reproduction code for "Testing for racial bias using inconsistent perceptions of race" (Gera and Pierson, 2024)
 
-# System requirements
+# System requirements, software requirements, and installation guide
 
 ## Hardware and OS requirements
-No non-standard hardware is required to run this code, only a standard computer with enough RAM and suitable CPU.
-
-The code runs on Linux and should run on macOS; this software has been tested on:
-    
-* Linux: Ubuntu 20.04.6 LTS (Focal Fossa)
+No non-standard hardware is required to run this code, only a standard computer with enough RAM and suitable CPU. The code runs on Linux and should run on macOS; this software has been tested on Linux Ubuntu 20.04.6 LTS.
 
 ## Software requirements
 ### Python dependencies
@@ -23,7 +19,7 @@ linearmodels
 ```
 
 ### R dependencies
-We use R code for analysis; from an R terminal, you can install the package dependencies:
+We use R code for analysis; from an R terminal, you can install the package dependencies as follows:
 ```R
 install.packages(c('xtable', 'data.table', 'magrittr', 'scales', 'dplyr', 'tidyr', 'tidyverse', 'ggplot2', 'fixest', 'patchwork', 'lme4', 'survival', 'alpaca', 'broom', 'stringr'))
 ```
@@ -41,11 +37,7 @@ conda install pandas matplotlib numpy scipy IPython statsmodels linearmodels
 ```
 but you can use conda to install the Python dependencies.
 
-# Installation guide
-After installing the software dependencies, clone the repo, and you should be able to run the preprocessing and analysis code.
-
-# Demo/Instructions for use
-## Instructions for reproducing the results in this paper
+# Instructions for reproducing the results in this paper
 1. Raw data can be obtained by contacting the authors of the Open Policing Project at open-policing@lists.stanford.edu.
 2. Preprocess the data (est. runtime: 3-10 mins per state). For each state, run the state-specific python file (ex. `az.py`) to standardize entries and filter the raw state data down to the set of multiply stopped drivers and inconsistently-perceived drivers. `policing_data_expl.py` contains all the preprocessing code and generates csv files in the `csv` folder that are used later on in the analysis; this file is used as a module for the state-specific python files, so it shouldn't be directly. 
     * Before running `python az.py`, `python co.py`,  or `python tx.py`, replace `path-to-raw-csv` in the `config` with the path to the raw state data you downloaded.
