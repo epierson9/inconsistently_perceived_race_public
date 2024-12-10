@@ -3,7 +3,7 @@
 # System requirements, software requirements, and installation guide
 
 ## Hardware and OS requirements
-No non-standard hardware is required to run this code, only a standard computer with enough RAM and suitable CPU (the machine we tested on had 60GB RAM, CPU with 16 cores@2.6GHz/core, and at least 200 GB of memory). The code runs on Linux and should run on macOS; this software has been tested on Linux Ubuntu 20.04.6 LTS.
+No non-standard hardware is required to run this code, only a standard computer with enough RAM and suitable CPU (the machine we tested on had 60GB RAM, CPU with 16 cores at 2.6GHz/core, and at least 200 GB of memory). The code runs on Linux and should run on macOS; this software has been tested on Linux Ubuntu 20.04.6 LTS.
 
 ## Software requirements
 ### Python dependencies
