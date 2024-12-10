@@ -6,13 +6,14 @@
 No non-standard hardware is required to run this code, only a standard computer with enough RAM and suitable CPU.
 
 The code should run on Linux; this software has been tested on:
+    
     * Linux: Ubuntu 20.04.6 LTS (Focal Fossa)
 
 ## Software requirements
-## Python dependencies
+### Python dependencies
 We use Python code for preprocessing; `pandas` is the only package dependency.
 
-## R dependencies
+### R dependencies
 We use R code for analysis; from an R terminal, you can install the package dependencies:
 ```R
 install.packages(c('xtable', 'data.table', 'magrittr', 'scales', 'dplyr', 'tidyr', 'tidyverse', 'ggplot2', 'fixest', 'patchwork', 'lme4', 'survival', 'alpaca', 'broom', 'stringr'))
