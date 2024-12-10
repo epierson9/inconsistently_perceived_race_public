@@ -3,7 +3,11 @@
 # System requirements
 
 ## Hardware and OS requirements
-No non-standard hardware is required to run this code, only a standard computer with enough RAM and suitable CPU.
+No non-standard hardware is required to run this code; we used a computer with the following specs:
+
+* RAM: 60 GB
+* CPU: 4+ cores, 2.6 GHz/core
+* Memory: 200 GB
 
 The code runs on Linux and should run on macOS; this software has been tested on:
     
@@ -48,9 +52,9 @@ After installing the software dependencies, clone the repo, and you should be ab
 ## Instructions for reproducing the results in this paper
 1. Raw data can be obtained by contacting the authors of the Open Policing Project at open-policing@lists.stanford.edu.
 2. Preprocess the data (est. runtime: 3-10 mins per state). For each state, run the state-specific python file (ex. `az.py`) to standardize entries and filter the raw state data down to the set of multiply stopped drivers and inconsistently-perceived drivers. `policing_data_expl.py` contains all the preprocessing code and generates csv files in the `csv` folder that are used later on in the analysis; this file is used as a module for the state-specific python files, so it shouldn't be directly. 
-    * Before running `python az.py`, `python co.py`,  or `python tx.py`, replace `path-to-raw-csv` in the `config` with the path to the raw state data you downloaded.
+    * Before running `python az.py`, `python co.py`,  or `python tx.py`, replace `path-to-raw-csv` in the `config` with the path to the raw state data you downloaded. Note: Sample data can be found in the `csv/samples` folder, so you can also use the path to the sample data (i.e. `csv/samples/az_sample.csv`) instead of the raw state data and proceed with the statistical analysis.
     * It should produce three csv files per state, and these will be used in the statistical analysis; the filenames will start with the state prefix (ex. `az_`)
-3. Conduct the statistical analyses on the paper. This includes running regressions using different models to estimate differences in search and arrest rates, along with analyzing the representativeness of our analyzed population. `plot_regression_res.R` contains the code to reproduce the figures in the paper (est. runtime: 5-10 mins per regression); `make_descriptive_stats_table.R` contains the code to reproduce the descriptive stats table (est. runtime: 1hr).
+3. Conduct the statistical analyses on the paper. This includes running regressions using different models to estimate differences in search and arrest rates, along with analyzing the representativeness of our analyzed population. `plot_regression_res.R` contains the code to reproduce the figures in the paper (est. runtime: 5-10 mins per regression); `make_descriptive_stats_table.R` contains the code to reproduce the descriptive stats table (est. runtime: 1hr). Analysis of the raw state data reproduces the figures and table in the paper ; some sample data results are located in the `csv/samples/results` folder.
     * The `plots/` directory will contain all the resulting figures and tables
     * Replace `path-to-STATE-data.csv` (ex. `path-to-AZ-data.csv`) with the path to that state's raw data before running the R script
     * To run the regressions with the linear probability model on search rate (Figure 1), run `Rscript plot_regression_res.R plot-primary-spec-feols-search-rate`
