@@ -7,21 +7,39 @@ No non-standard hardware is required to run this code, only a standard computer 
 
 ## Software requirements
 ### Python dependencies
-We use Python code for preprocessing; the following are the package dependencies:
+We use Python (3.13.1) for preprocessing; the following are the package dependencies:
 ```
-pandas
-matplotlib
-numpy
-scipy
-IPython
-statsmodels
-linearmodels
+pandas=2.2.3
+matplotlib=3.9.3
+numpy=2.2.0
+scipy=1.14.1
+ipython=8.30.0
+statsmodels=0.14.4
+linearmodels=6.1
 ```
 
 ### R dependencies
-We use R code for analysis; from an R terminal, you can install the package dependencies as follows:
+We use R (4.4.2) for analysis; from an R terminal, you can install the package dependencies:
 ```R
 install.packages(c('xtable', 'data.table', 'magrittr', 'scales', 'dplyr', 'tidyr', 'tidyverse', 'ggplot2', 'fixest', 'patchwork', 'lme4', 'survival', 'alpaca', 'broom', 'stringr'))
+```
+Below is the specific versioning of those packages:
+```
+xtable=1.8.4
+data.table=1.15.4
+magrittr=2.0.3
+scales=1.3.0
+dplyr=1.1.4
+tidyr=1.3.1
+tidyverse=2.0.0
+ggplot2=3.5.1
+fixest=0.12.1
+patchwork=1.3.0
+lme4=1.1.35.5
+survival=3.7.0
+alpaca=0.3.4
+broom=1.0.7
+stringr=1.5.1
 ```
 
 ### Conda dev environment
